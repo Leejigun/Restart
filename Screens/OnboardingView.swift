@@ -9,8 +9,13 @@ import SwiftUI
 
 struct OnboardingView: View {
     
+    // MARK: - Properties
     @AppStorage(AppStorageIdentifier.onboarding.rawValue) private var isActiveOnboarding: Bool = true
     
+    @State var buttonWidth: Double = UIScreen.main.bounds.width - 80
+    @State var buttonOffset: Double = 0
+    
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color("ColorBlue")
@@ -66,6 +71,14 @@ struct OnboardingView: View {
                         .offset(x: 20)
                     
                     HStack {
+                        Capsule()
+                            .fill(Color("ColorRed"))
+                            .frame(width: max(80, buttonOffset + 80), height: 80, alignment: .center)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack {
                         ZStack {
                             Circle()
                                 .fill(Color("ColorRed"))
@@ -76,15 +89,29 @@ struct OnboardingView: View {
                         }
                         .foregroundColor(.white)
                         .frame(width: 80, height: 80, alignment: .center)
-                        .onTapGesture {
-                            isActiveOnboarding = false
-                        }
+                        .offset(x: buttonOffset)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { gesture in
+                                    if gesture.translation.width > 0 && buttonOffset <= buttonWidth - 80{
+                                        buttonOffset = gesture.translation.width
+                                    }
+                                }
+                                .onEnded { _ in
+                                    if buttonOffset > buttonWidth / 2 {
+                                        buttonOffset = buttonWidth - 80
+                                        isActiveOnboarding = false
+                                    } else {
+                                        buttonOffset = 0
+                                    }
+                                }
+                        )//: DragGesture
                         
                         Spacer()
                     } //: Circle Button
                     
                 } //: Fotter
-                .frame(height: 80, alignment: .center)
+                .frame(width: buttonWidth, height: 80, alignment: .center)
                 .padding(8)
                 
                 
