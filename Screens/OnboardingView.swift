@@ -15,6 +15,9 @@ struct OnboardingView: View {
     @State var buttonWidth: Double = UIScreen.main.bounds.width - 80
     @State var buttonOffset: Double = 0
     
+    /// if true, start animation
+    @State var isAnimation: Bool = false
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -41,6 +44,9 @@ struct OnboardingView: View {
                         .multilineTextAlignment(.center)
                         .padding(10)
                 } //: Header
+                .opacity(isAnimation ? 1 : 0)
+                .offset(y: isAnimation ? 0 : -40)
+                .animation(.easeOut(duration: 1), value: isAnimation)
                 
                 // MARK: - Center
                 ZStack {
@@ -50,7 +56,10 @@ struct OnboardingView: View {
                     Image("character-1")
                         .resizable()
                         .scaledToFit()
+                        .opacity(isAnimation ? 1 : 0)
+                        .animation(.easeOut(duration: 1), value: isAnimation)
                 } //: Center
+                
                 
                 Spacer()
                 
@@ -98,11 +107,13 @@ struct OnboardingView: View {
                                     }
                                 }
                                 .onEnded { _ in
-                                    if buttonOffset > buttonWidth / 2 {
-                                        buttonOffset = buttonWidth - 80
-                                        isActiveOnboarding = false
-                                    } else {
-                                        buttonOffset = 0
+                                    withAnimation(.easeOut(duration: 0.4)) {
+                                        if buttonOffset > buttonWidth / 2 {
+                                            buttonOffset = buttonWidth - 80
+                                            isActiveOnboarding = false
+                                        } else {
+                                            buttonOffset = 0
+                                        }
                                     }
                                 }
                         )//: DragGesture
@@ -113,10 +124,16 @@ struct OnboardingView: View {
                 } //: Fotter
                 .frame(width: buttonWidth, height: 80, alignment: .center)
                 .padding(8)
+                .opacity(isAnimation ? 1 : 0)
+                .offset(y: isAnimation ? 0 : 40)
+                .animation(.easeOut(duration: 1), value: isAnimation)
                 
                 
             } //: VStack
         } //: ZStack
+        .onAppear {
+            isAnimation = true
+        }
     }
 }
 

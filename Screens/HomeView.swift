@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @AppStorage(AppStorageIdentifier.onboarding.rawValue) private var isActiveOnboarding: Bool = false
+    @State private var isAnimation: Bool = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -23,7 +24,9 @@ struct HomeView: View {
                 Image("character-2")
                     .resizable()
                     .scaledToFit()
-                .padding()
+                    .padding()
+                    .offset(y: isAnimation ? 35 : -35)
+                    .animation(Animation.easeOut(duration: 4).repeatForever(), value: isAnimation)
             } //: Header
             
             // MARK: - Center
@@ -38,7 +41,9 @@ struct HomeView: View {
             
             // MARK: - Footer
             Button(action: {
-                isActiveOnboarding = true
+                withAnimation {
+                    isActiveOnboarding = true
+                }
             }) {
                 Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
                     .imageScale(.large)
@@ -53,6 +58,11 @@ struct HomeView: View {
             .padding()
             
         } //: VStack
+        .onAppear(perform: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                isAnimation = true
+            })
+        })
     }
 }
 
