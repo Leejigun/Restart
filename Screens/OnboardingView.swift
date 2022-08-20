@@ -22,6 +22,8 @@ struct OnboardingView: View {
     /// if true, start animation
     @State var isAnimation: Bool = false
     
+    private let hapticFeedback = UINotificationFeedbackGenerator()
+    
     // MARK: - Body
     var body: some View {
         ZStack {
@@ -150,9 +152,12 @@ struct OnboardingView: View {
                                 .onEnded { _ in
                                     withAnimation(.easeOut(duration: 0.4)) {
                                         if buttonOffset > buttonWidth / 2 {
+                                            AudioPlayer.shared.playSound(sound: .chimeup)
+                                            hapticFeedback.notificationOccurred(.success)
                                             buttonOffset = buttonWidth - 80
                                             isActiveOnboarding = false
                                         } else {
+                                            hapticFeedback.notificationOccurred(.warning)
                                             buttonOffset = 0
                                         }
                                     }
@@ -175,6 +180,7 @@ struct OnboardingView: View {
         .onAppear {
             isAnimation = true
         }
+        .preferredColorScheme(.dark) // fixed dark mode
     }
 }
 

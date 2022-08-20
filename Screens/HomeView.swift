@@ -42,6 +42,7 @@ struct HomeView: View {
             // MARK: - Footer
             Button(action: {
                 withAnimation {
+                    AudioPlayer.shared.playSound(sound: .success)
                     isActiveOnboarding = true
                 }
             }) {
